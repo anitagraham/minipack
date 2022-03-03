@@ -59,6 +59,8 @@ module Minipack
       # The base directory of the frontend.
       config_attr :base_path
 
+      # the path inside public to which should prefix all manifest entries
+      config_attr :manifest_prefix_path
       config_attr :manifest
 
       # The lazy compilation is cached until a file is change under the tracked paths.

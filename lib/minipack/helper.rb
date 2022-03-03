@@ -42,7 +42,7 @@ module Minipack::Helper
   # <%= javascript_bundles_with_chunks_tag 'map' %>
   def javascript_bundles_with_chunks_tag(*names, manifest: nil, **options)
     sources_from_manifest_entrypoints(names, 'js', key: manifest).map { |entry|
-      javascript_include_tag(entry.path, **minipack_options_for(entry, options))
+      javascript_include_tag(path_for(entry), **minipack_options_for(entry, options))
     }.join("\n").html_safe
   end
 
@@ -58,7 +58,7 @@ module Minipack::Helper
   def stylesheet_bundle_tag(*names, manifest: nil, **options)
     if Minipack.configuration.extract_css?
       entries_from_manifest(names, 'css', key: manifest).map { |entry|
-        stylesheet_link_tag(entry.path, **minipack_options_for(entry, options))
+        stylesheet_link_tag(path_for(entry), **minipack_options_for(entry, options))
       }.join("\n").html_safe
     end
   end
@@ -79,7 +79,7 @@ module Minipack::Helper
   def stylesheet_bundles_with_chunks_tag(*names, manifest: nil, **options)
     if Minipack.configuration.extract_css?
       sources_from_manifest_entrypoints(names, 'css', key: manifest).map { |entry|
-        stylesheet_link_tag(entry.path, **minipack_options_for(entry, options))
+        stylesheet_link_tag(path_for(entry), **minipack_options_for(entry, options))
       }.join("\n").html_safe
     end
   end
@@ -101,6 +101,10 @@ module Minipack::Helper
   def entries_from_manifest(names, ext, key: nil)
     manifest = get_manifest_by_key(key)
     names.map { |name| manifest.lookup!(name.to_s + '.' + ext) }
+  end
+
+  def path_for(entry)
+    File.join(configuration.manifest_prefix_path, entry.path)
   end
 
   def sources_from_manifest_entrypoints(names, type, key: nil)
